@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Skills Marking Keys — OSCE Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F1E7;
+    --paper-dim: #EDE7D8;
+    --ink: #1E2422;
+    --ink-soft: #55605c;
+    --navy: #153B4D;
+    --navy-light: #2C6178;
+    --rust: #BE5B2A;
+    --rust-soft: #f0d9c9;
+    --green: #3E7A5B;
+    --border: #DED6C2;
+    --card: #FFFDF8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: var(--navy);
+    color: #EAF1F3;
+    padding: 22px 0 40px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+  }
+  .brand {
+    padding: 0 20px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+    margin-bottom: 10px;
+  }
+  .brand .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9FC1CC;
+    margin-bottom: 6px;
+  }
+  .brand h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 21px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    line-height: 1.25;
+  }
+  .brand p {
+    font-size: 12px;
+    color: #B7CBD1;
+    margin: 0;
+    line-height: 1.5;
+  }
+  .search-wrap { padding: 14px 20px 6px; }
+  .search-wrap input {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 7px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+  .search-wrap input::placeholder { color: #9db2b8; }
+  .search-wrap input:focus { outline: 2px solid var(--rust); outline-offset: 1px; }
+
+  nav.categories { padding: 6px 10px 0; }
+  .cat-block { margin-bottom: 2px; }
+  .cat-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: #DCE8EB;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 6px;
+  }
+  .cat-btn:hover { background: rgba(255,255,255,0.06); }
+  .cat-btn .count { color: #7FA3AE; font-weight: 500; }
+  .cat-btn .chev { transition: transform .15s ease; opacity: .7; margin-left: 8px;}
+  .cat-block.open .cat-btn .chev { transform: rotate(90deg); }
+  .proto-list { display: none; padding: 0 4px 8px 10px; }
+  .cat-block.open .proto-list { display: block; }
+  .proto-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: #C6D7DB;
+    font-size: 13px;
+    padding: 7px 10px 7px 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    line-height: 1.35;
+    border-left: 2px solid transparent;
+  }
+  .proto-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .proto-btn.active { background: rgba(190,91,42,0.22); color: #fff; border-left: 2px solid var(--rust); }
+  .proto-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #4C7E8C; flex-shrink: 0;
+  }
+  .proto-btn.active .proto-dot { background: var(--rust); }
+
+  /* Main */
+  main { flex: 1; padding: 40px 48px 80px; max-width: 900px; }
+  .home h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 34px;
+    margin: 6px 0 10px;
+  }
+  .home .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 640px; line-height: 1.65; margin-bottom: 26px;}
+  .stat-row { display:flex; gap: 18px; margin-bottom: 34px; flex-wrap: wrap;}
+  .stat {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; min-width: 140px;
+  }
+  .stat .num { font-family:'Source Serif 4', serif; font-size: 30px; color: var(--navy); }
+  .stat .lab { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); margin-top: 2px;}
+  .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 14px; }
+  .home-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px; cursor: pointer; transition: box-shadow .15s ease, transform .15s ease;
+  }
+  .home-card:hover { box-shadow: 0 4px 14px rgba(21,59,77,0.10); transform: translateY(-1px); }
+  .home-card h3 { font-family:'Source Serif 4', serif; font-size: 16.5px; margin: 0 0 6px; color: var(--navy);}
+  .home-card p { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  /* Protocol view */
+  .proto-header { margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 16px;}
+  .breadcrumb { font-family:'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--rust); margin-bottom: 6px;}
+  .proto-header h2 { font-family:'Source Serif 4', serif; font-size: 28px; margin: 0 0 12px; line-height:1.2;}
+  .toolbar { display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
+  .toolbar button {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600;
+    border: 1px solid var(--border); background: #fff; color: var(--navy);
+    padding: 7px 13px; border-radius: 7px; cursor: pointer;
+  }
+  .toolbar button:hover { border-color: var(--navy-light); }
+  .toolbar button.primary { background: var(--rust); color: #fff; border-color: var(--rust); }
+  .progress-pill {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft);
+    background: var(--paper-dim); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px;
+  }
+  .progress-pill b { color: var(--navy); }
+
+  table.mark-table { width: 100%; border-collapse: collapse; margin-top: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  table.mark-table thead th {
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--ink-soft); background: var(--paper-dim); padding: 10px 14px; border-bottom: 1px solid var(--border);
+  }
+  table.mark-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: top;}
+  table.mark-table tr:last-child td { border-bottom: none; }
+  table.mark-table td.step-cell { line-height: 1.5; }
+  td.mark-cell { width: 46px; text-align:center; }
+  td.comment-cell { width: 220px; }
+  td.comment-cell input {
+    width: 100%; border: none; border-bottom: 1px dashed var(--border);
+    background: transparent; font-family: 'Inter', sans-serif; font-size: 13px; padding: 4px 2px; color: var(--ink);
+  }
+  td.comment-cell input:focus { outline: none; border-bottom-color: var(--navy-light); }
+  .chk { width: 19px; height: 19px; accent-color: var(--rust); cursor: pointer; }
+  tr.checked td.step-cell { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--border); }
+
+  .foot-note { margin-top: 22px; font-size: 12px; color: var(--ink-soft); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 14px;}
+
+  @media print {
+    .sidebar, .toolbar { display: none !important; }
+    main { padding: 0; max-width: none; }
+    body { background: #fff; }
+    table.mark-table { border: 1px solid #999; }
+  }
+  @media (max-width: 860px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; }
+    main { padding: 24px 18px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="eyebrow">Clinical &amp; Communication Skills</div>
+      <h1>OSCE Marking Keys</h1>
+      <p>Self-practice checklists for history &amp; examination stations.</p>
+    </div>
+    <div class="search-wrap">
+      <input id="searchBox" type="text" placeholder="Search protocols…" oninput="onSearch()">
+    </div>
+    <nav class="categories" id="navCategories"></nav>
+  </aside>
+  <main id="mainView"></main>
+</div>
+
+<script id="dataStore" type="application/json">[{"name": "History Taking & General Skills", "protocols": [{"id": "c0p0", "title": "The General History Protocol", "items": ["Introduces self, confirms patient's name and DOB, gains consent to talk", "Uses open questions to elicit presenting complaint in patient's own words", "Explores history of presenting complaint (onset, duration, character, severity, associated symptoms)", "Asks about relevant systems review", "Takes past medical and surgical history", "Takes drug history including allergies", "Takes family history", "Takes social history (occupation, smoking, alcohol, living situation, function)", "Explores patient's ideas, concerns and expectations", "Summarises back to the patient and checks understanding", "Thanks patient and closes consultation appropriately"]}]}, {"name": "Respiratory", "protocols": [{"id": "c1p0", "title": "The Respiratory History Protocol", "items": ["Presenting complaint explored in patient's own words", "Asks about cough, sputum (colour/amount), haemoptysis", "Asks about dyspnoea, exercise tolerance, orthopnoea, PND", "Asks about wheeze, chest pain, fever/night sweats", "Occupational and smoking history (pack-years) taken", "Past history of asthma/COPD/TB and relevant exposures"]}, {"id": "c1p1", "title": "The Respiratory Examination Protocol", "items": ["Washes hands, introduces self, positions patient at 45\u00b0, exposes chest appropriately", "General inspection: respiratory distress, use of accessory muscles, cyanosis, cachexia", "Inspects hands: clubbing, nicotine staining, tremor (CO2 flap)", "Checks respiratory rate and pattern; assesses tracheal position", "Inspects chest wall shape and symmetry of movement", "Palpates chest expansion (upper, lower) and tactile vocal fremitus", "Percusses all lung zones anteriorly and posteriorly, comparing sides", "Auscultates all lung zones for breath sounds and added sounds", "Checks vocal resonance", "Checks for sacral/ankle oedema; offers to check sputum pot/peak flow"]}]}, {"name": "Cardiovascular", "protocols": [{"id": "c2p0", "title": "The Cardiovascular History Protocol", "items": ["Presenting complaint explored (chest pain using SOCRATES)", "Asks about dyspnoea, orthopnoea, PND, palpitations, syncope", "Asks about ankle swelling, claudication", "Cardiac risk factors: smoking, hypertension, diabetes, cholesterol, family history", "Past cardiac history and medications (including anticoagulants)"]}, {"id": "c2p1", "title": "The Cardiovascular Examination Protocol", "items": ["Washes hands, introduces self, positions patient at 45\u00b0, exposes chest", "General inspection: breathlessness, cyanosis, pallor, surrounding clues (GTN spray, medications)", "Inspects hands: clubbing, splinter haemorrhages, Osler's nodes, Janeway lesions", "Checks radial pulse (rate, rhythm) and radio-radial delay", "Checks blood pressure (states would measure both arms)", "Assesses JVP with patient at 45\u00b0", "Inspects face: malar flush, corneal arcus, xanthelasma", "Palpates apex beat and any heaves/thrills", "Auscultates all four valve areas, with bell and diaphragm, in expiration/held breath and left lateral position", "Auscultates carotids for bruits; radiates murmur to axilla/carotids as relevant", "Checks sacral and ankle oedema"]}, {"id": "c2p2", "title": "The Peripheral Vascular Examination Protocol", "items": ["Inspects both legs: colour, hair loss, ulcers, scars, muscle wasting", "Palpates temperature comparing both legs", "Palpates femoral, popliteal, posterior tibial and dorsalis pedis pulses bilaterally", "Checks capillary refill time", "Auscultates for femoral bruits", "Performs Buerger's test if indicated"]}, {"id": "c2p3", "title": "The Lower Limb Venous Examination Protocol", "items": ["Inspects both legs standing: visible varicosities, skin changes, ulcers, oedema", "Palpates course of long and short saphenous veins for tenderness/thrombophlebitis", "Performs cough impulse test at the saphenofemoral junction", "Performs tap test / Trendelenburg test to assess valve competence", "Checks for pitting oedema and signs of chronic venous insufficiency (lipodermatosclerosis)"]}]}, {"name": "Gastrointestinal", "protocols": [{"id": "c3p0", "title": "The Gastrointestinal History Protocol", "items": ["Presenting complaint explored (pain using SOCRATES, or altered bowel habit)", "Asks about nausea, vomiting, haematemesis, dysphagia, appetite/weight change", "Asks about bowel habit, bleeding PR, melaena, jaundice", "Past abdominal/surgical history", "Alcohol intake, diet, and relevant travel history"]}, {"id": "c3p1", "title": "The Gastrointestinal Examination Protocol", "items": ["Washes hands, introduces self, gains consent, positions patient flat, exposes nipples to knees", "General inspection: jaundice, pallor, cachexia, distension; surrounding clues", "Inspects hands: clubbing, leuconychia, koilonychia, palmar erythema, Dupuytren's, asterixis", "Inspects face/mouth: conjunctival pallor, jaundice, angular stomatitis, glossitis", "Checks for left supraclavicular (Virchow's) node; inspects chest for spider naevi/gynaecomastia", "Inspects abdomen: scars, striae, distension, visible masses or peristalsis", "Performs light then deep palpation of all nine regions, watching patient's face for pain", "Palpates liver, spleen and kidneys (ballottement) specifically", "Percusses liver span and for shifting dullness if ascites suspected", "Auscultates bowel sounds and for renal/aortic/hepatic bruits", "States would examine hernial orifices, genitalia and perform PR examination if indicated"]}, {"id": "c3p2", "title": "The Rectal Examination Protocol", "items": ["Explains procedure clearly, gains explicit consent, offers a chaperone", "Positions patient in left lateral position with knees drawn up", "Inspects perianal area: skin tags, fissures, external haemorrhoids, fistulae", "Warns patient before inserting lubricated, gloved finger", "Assesses anal tone, and palpates systematically for masses", "In males, assesses prostate size, shape, symmetry and consistency", "Inspects glove for blood, mucus or melaena on withdrawal", "Thanks patient, offers tissue/wipes, allows privacy to dress"]}]}, {"name": "Psychiatric", "protocols": [{"id": "c4p0", "title": "The Psychiatric History Protocol", "items": ["Introduces self and establishes rapport sensitively", "Explores presenting complaint and history of current episode", "Screens for mood, anxiety, psychotic and cognitive symptoms", "Directly and sensitively asks about risk: self-harm, suicidal ideation, harm to others", "Past psychiatric history, including admissions and treatment response", "Family psychiatric history, personal/developmental history, substance use"]}, {"id": "c4p1", "title": "The Psychiatric Mental State Examination", "items": ["Appearance and behaviour: dress, grooming, eye contact, rapport, psychomotor activity", "Speech: rate, volume, tone, quantity", "Mood (patient's stated) and affect (observed range and congruence)", "Thought form (e.g. flight of ideas, loosening of association) and thought content (delusions, preoccupations)", "Perception: hallucinations in any modality", "Cognition: orientation, attention, memory (screening)", "Insight and judgement assessed"]}]}, {"name": "Neurological", "protocols": [{"id": "c5p0", "title": "The Neurological History Protocol", "items": ["Presenting complaint explored with attention to onset (sudden vs gradual) and progression", "Asks about weakness, sensory change, headache, visual change, speech disturbance", "Asks about seizures, loss of consciousness, coordination/balance problems", "Past neurological history, vascular risk factors, family history"]}, {"id": "c5p1", "title": "Headache History Protocol", "items": ["Characterises headache using SOCRATES", "Screens for red flags: thunderclap onset, fever/neck stiffness, worst-ever headache, visual disturbance, focal neurology", "Asks about aura, triggers, associated nausea/photophobia/phonophobia", "Asks about medication overuse and analgesic use pattern"]}, {"id": "c5p2", "title": "Cranial Nerve Examination Protocol", "items": ["CN I: asks about sense of smell", "CN II: visual acuity, visual fields, pupillary reflexes, fundoscopy", "CN III, IV, VI: eye movements in an 'H' pattern, checks for nystagmus/diplopia", "CN V: facial sensation (three divisions) and motor (masseter/temporalis), corneal reflex", "CN VII: facial movements (frown, close eyes, smile, puff cheeks)", "CN VIII: gross hearing, Rinne and Weber tests", "CN IX, X: palate movement and gag reflex (if indicated), voice quality", "CN XI: shoulder shrug and head turn against resistance", "CN XII: tongue protrusion and movement"]}, {"id": "c5p3", "title": "Cerebellar Examination Protocol", "items": ["Observes gait, including heel-to-toe (tandem) walking", "Performs finger-nose test, looking for intention tremor/dysmetria", "Performs heel-shin test", "Checks for dysdiadochokinesia", "Assesses for nystagmus and truncal ataxia (Romberg's test)", "Assesses speech for dysarthria (scanning speech)"]}, {"id": "c5p4", "title": "The Peripheral Nervous System Examination Protocol", "items": ["Inspects limbs for wasting, fasciculations, tremor", "Assesses tone in upper and lower limbs", "Tests power in a systematic, myotomal pattern, comparing sides", "Tests reflexes: biceps, triceps, supinator, knee, ankle, plantar response", "Tests sensation: light touch, pinprick, vibration, proprioception in a dermatomal pattern", "Assesses coordination and gait"]}, {"id": "c5p5", "title": "Locomotion (Parkinsonism) Examination Protocol", "items": ["Observes at rest for tremor, reduced facial expression (hypomimia), posture", "Assesses tone for cogwheel/lead-pipe rigidity", "Assesses bradykinesia (finger tapping, rapid alternating movements)", "Observes gait: initiation, stride length, arm swing, freezing, turning", "Tests postural reflexes (pull test) with care for patient safety"]}, {"id": "c5p6", "title": "Speech and Higher Centres Examination Protocol", "items": ["Assesses spontaneous speech for fluency and content", "Assesses comprehension (following simple/complex commands)", "Assesses repetition and naming", "Assesses reading and writing if indicated", "Screens higher cognitive function (orientation, memory, praxis, neglect) as indicated"]}]}, {"name": "Musculoskeletal", "protocols": [{"id": "c6p0", "title": "The Musculoskeletal History Protocol", "items": ["Presenting complaint explored using SOCRATES for pain", "Asks about swelling, stiffness (and early morning duration), locking, instability", "Asks about function/impact on activities of daily living", "Screens for red flags and extra-articular/systemic features"]}, {"id": "c6p1", "title": "The Shoulder Examination Protocol", "items": ["Look: inspects from front, side and behind for asymmetry, wasting, scars", "Feel: palpates bony landmarks and joint line for tenderness", "Move: active and passive range of motion in all planes, noting painful arc", "Special tests: performs relevant impingement and stability tests (e.g. apprehension test)", "Assesses neurovascular status of the limb"]}, {"id": "c6p2", "title": "The Elbow Examination Protocol", "items": ["Look: inspects for swelling, deformity, scars, rheumatoid nodules", "Feel: palpates epicondyles, olecranon and joint line for tenderness/effusion", "Move: active and passive flexion/extension and pronation/supination", "Special tests: tests for lateral/medial epicondylitis (tennis/golfer's elbow)"]}, {"id": "c6p3", "title": "The Hand and Wrist Examination Protocol", "items": ["Look: inspects dorsal and palmar surfaces for deformity, wasting, nail changes", "Feel: palpates joints systematically for tenderness/swelling", "Move: active range of motion of wrist, fingers and thumb", "Special tests: performs relevant tests (e.g. Tinel's/Phalen's for carpal tunnel)", "Assesses grip strength and functional tasks (e.g. pincer grip, button doing up)"]}, {"id": "c6p4", "title": "The Hip History Protocol", "items": ["Explores pain location (groin vs lateral hip vs referred) and character", "Asks about limp, limitation of walking distance, use of aids", "Asks about stiffness and difficulty with stairs/footwear/transfers"]}, {"id": "c6p5", "title": "The Hip Examination Protocol", "items": ["Look: gait, standing alignment, and Trendelenburg test", "Feel: palpates greater trochanter and groin for tenderness", "Move: assesses flexion, internal/external rotation, abduction/adduction", "Special tests: measures leg length; performs Thomas's test for fixed flexion deformity"]}, {"id": "c6p6", "title": "The Knee History Protocol", "items": ["Explores pain site, swelling, locking or giving way", "Asks about mechanism of injury if traumatic", "Asks about function and effect on mobility"]}, {"id": "c6p7", "title": "The Knee Examination Protocol", "items": ["Look: gait, alignment (varus/valgus), swelling, wasting of quadriceps", "Feel: palpates joint line, patella, checks for effusion (patellar tap)", "Move: active and passive flexion/extension", "Special tests: ligament testing (collateral, anterior/posterior drawer) and meniscal tests (McMurray's)"]}, {"id": "c6p8", "title": "Low Back Pain History Protocol", "items": ["Characterises pain and screens for radicular symptoms", "Screens for red flags: saddle anaesthesia, bladder/bowel dysfunction, bilateral leg weakness, trauma, weight loss", "Asks about occupational factors and psychosocial (yellow flag) factors"]}, {"id": "c6p9", "title": "Low Back Pain Examination Protocol", "items": ["Observes posture and gait", "Palpates spinous processes and paraspinal muscles", "Assesses range of motion (flexion, extension, lateral flexion, rotation)", "Performs straight leg raise test", "Assesses lower limb neurology (power, sensation, reflexes) and perianal sensation/tone if red flags present"]}]}, {"name": "Special Senses & Skin", "protocols": [{"id": "c7p0", "title": "The ENT History Protocol", "items": ["Explores presenting complaint (ear pain, discharge, hearing loss, tinnitus, vertigo, sore throat, nasal symptoms)", "Asks about associated fever, recent infection, noise exposure", "Past ENT history and relevant occupational/social history"]}, {"id": "c7p1", "title": "The ENT Examination Protocol", "items": ["Inspects and palpates external ear and mastoid", "Performs otoscopy of both ears, commenting on canal and tympanic membrane", "Performs Rinne and Weber tuning fork tests", "Inspects nose (external and anterior rhinoscopy) and oropharynx", "Palpates cervical lymph nodes"]}, {"id": "c7p2", "title": "The Examination of the Neck Protocol", "items": ["Inspects neck at rest and on swallowing/tongue protrusion", "Palpates thyroid gland from behind, noting size, consistency, nodules, mobility on swallowing", "Palpates cervical lymph node chains systematically", "Auscultates thyroid for bruit if enlarged"]}, {"id": "c7p3", "title": "Ophthalmological History and Examination Protocol", "items": ["Explores visual symptoms: acuity change, pain, redness, discharge, flashes/floaters", "Tests visual acuity (with Snellen chart) and visual fields to confrontation", "Assesses pupils (size, symmetry, direct/consensual and swinging light reflex)", "Assesses eye movements and checks for nystagmus/diplopia", "Performs fundoscopy, commenting on red reflex, disc, vessels and macula"]}, {"id": "c7p4", "title": "Dermatological History Protocol", "items": ["Explores onset, distribution, evolution and symptoms (itch, pain) of the rash/lesion", "Asks about triggers, new products/medications, contacts with similar symptoms", "Past history of skin disease, atopy, and family history"]}, {"id": "c7p5", "title": "Examination of the Skin Protocol", "items": ["Ensures good lighting and adequate exposure with consent", "Describes lesion(s) using site, size, shape, colour, border, surface", "Palpates for texture, tenderness, temperature and fixation to deeper structures", "Examines mucous membranes, nails and hair if relevant", "Documents distribution pattern across the body"]}, {"id": "c7p6", "title": "Examining and Describing a Lump Protocol", "items": ["Site, size and shape described accurately", "Assesses surface, edge/border and consistency on palpation", "Assesses fluctuance, fixation to skin/deep structures, and transillumination if relevant", "Checks temperature, tenderness and overlying skin changes", "Examines regional lymph nodes"]}, {"id": "c7p7", "title": "Ear Science Clinical Examination", "items": ["Inspects pinna and periauricular area", "Performs otoscopy, describing canal and tympanic membrane landmarks", "Performs Rinne test bilaterally and interprets result", "Performs Weber test and interprets lateralisation"]}]}, {"name": "Paediatric, Geriatric & Reproductive", "protocols": [{"id": "c8p0", "title": "The General Paediatric History Protocol", "items": ["Gathers history from parent/carer and child as age-appropriate", "Presenting complaint, birth history, developmental milestones", "Immunisation status, growth and feeding history", "Family and social/home environment history"]}, {"id": "c8p1", "title": "The General Paediatric Examination Protocol", "items": ["Engages child appropriately for age; observes playing/interacting before hands-on exam", "General inspection: growth parameters, hydration, activity level", "Systematic examination adapted to age (often least invasive parts first)", "Plots growth parameters on appropriate chart"]}, {"id": "c8p2", "title": "Female Reproductive History Protocol", "items": ["Menstrual history: menarche, cycle length/regularity, LMP", "Obstetric history (gravidity/parity) and contraceptive history", "Asks about pelvic pain, bleeding abnormalities, discharge", "Cervical screening history"]}, {"id": "c8p3", "title": "Pelvic Examination Protocol", "items": ["Explains procedure fully, gains explicit consent, offers a chaperone", "Positions patient appropriately with adequate draping/privacy", "Inspects external genitalia", "Performs speculum examination, visualising cervix", "Performs bimanual examination assessing uterus and adnexae"]}, {"id": "c8p4", "title": "The Breast Examination Protocol", "items": ["Explains procedure, gains explicit consent, offers a chaperone", "Inspects breasts in multiple positions (arms down, raised, hands on hips)", "Palpates breast tissue systematically in all quadrants and axillary tail", "Palpates axillary and supraclavicular lymph nodes"]}, {"id": "c8p5", "title": "The Sexual History Protocol", "items": ["Establishes privacy and confidentiality explicitly before starting", "Asks non-judgementally about partners, practices and protection", "Screens for symptoms of STIs and asks about prior testing/diagnoses", "Assesses risk factors and offers relevant testing/vaccination"]}, {"id": "c8p6", "title": "The Female STI Examination and Testing Protocol", "items": ["Gains consent and offers chaperone", "Inspects external genitalia for lesions/discharge", "Performs speculum exam and collects appropriate swabs", "Explains follow-up and result process clearly"]}, {"id": "c8p7", "title": "The Male STI Examination and Testing Protocol", "items": ["Gains consent and offers chaperone", "Inspects penis and scrotum for lesions/discharge", "Collects appropriate swabs/urine sample per local protocol", "Explains follow-up and result process clearly"]}, {"id": "c8p8", "title": "Male Lower Genitourinary Examination Protocol", "items": ["Gains consent and offers chaperone", "Inspects penis, foreskin (if present) and scrotal contents", "Palpates testes, epididymis and spermatic cord bilaterally", "Transilluminates any scrotal swelling", "Checks for inguinal hernia (standing, cough impulse)"]}]}, {"name": "Renal", "protocols": [{"id": "c9p0", "title": "The Genitourinary History Protocol", "items": ["Explores urinary symptoms: frequency, urgency, dysuria, haematuria, nocturia", "Asks about flank/loin pain and its character", "Past history of stones, UTIs, renal disease; relevant medications"]}, {"id": "c9p1", "title": "The Chronic Kidney Disease Examination Protocol", "items": ["General inspection: pallor, uraemic appearance, fluid status", "Inspects for AV fistula, peritoneal dialysis catheter or scars", "Palpates kidneys by ballottement bilaterally", "Assesses volume status: JVP, blood pressure, peripheral/sacral oedema", "Checks for asterixis and pericardial rub if uraemia suspected"]}]}, {"name": "Haematological", "protocols": [{"id": "c10p0", "title": "The Haematological History Protocol", "items": ["Asks about fatigue, bleeding/bruising, infection frequency, lymphadenopathy", "Past history of anaemia, transfusions, clotting disorders", "Family history of haematological conditions", "Dietary history relevant to anaemia (iron, B12, folate)"]}, {"id": "c10p1", "title": "The Haematological Examination Protocol", "items": ["Inspects for pallor (conjunctival, palmar creases), jaundice, bruising/petechiae", "Palpates lymph node groups systematically (cervical, axillary, inguinal)", "Palpates for hepatosplenomegaly", "Inspects for signs of bleeding (mucosal, joint swelling) and bone tenderness"]}]}, {"name": "Endocrine", "protocols": [{"id": "c11p0", "title": "The General Endocrine History Protocol", "items": ["Asks about weight change, energy/temperature intolerance, appetite", "Asks about symptoms suggestive of specific axis dysfunction (thyroid, adrenal, pituitary)", "Past endocrine history and family history"]}, {"id": "c11p1", "title": "The General Endocrine Examination Protocol", "items": ["General inspection: body habitus, skin/hair changes, growth/proportions", "Examines relevant gland (e.g. thyroid) and secondary features", "Checks vital signs including postural blood pressure if indicated"]}, {"id": "c11p2", "title": "Diabetes Mellitus History Protocol", "items": ["Asks about polyuria, polydipsia, weight change, blurred vision", "Screens for complications: neuropathy, foot problems, visual changes, cardiovascular symptoms", "Asks about hypoglycaemic episodes and self-monitoring", "Medication, diet and lifestyle history"]}, {"id": "c11p3", "title": "Diabetes Mellitus Examination Protocol", "items": ["Checks capillary blood glucose and BMI/waist circumference", "Examines feet: pulses, sensation (monofilament), skin integrity, deformity", "Performs fundoscopy for diabetic retinopathy", "Checks blood pressure and injection sites if on insulin"]}, {"id": "c11p4", "title": "The Examination of the Neck Protocol (Thyroid)", "items": ["Inspects neck at rest and on swallowing/tongue protrusion for goitre", "Palpates thyroid for size, nodules, tenderness and mobility on swallowing", "Auscultates for thyroid bruit if enlarged", "Assesses for signs of thyroid dysfunction: tremor, lid lag, reflexes, skin/hair"]}]}]</script>
+<script>
+const DATA = JSON.parse(document.getElementById('dataStore').textContent);
+const state = { current: null, checks: {}, comments: {} };
+
+function totalProtocols() {
+  return DATA.reduce((s,c)=>s+c.protocols.length, 0);
+}
+function totalItems() {
+  return DATA.reduce((s,c)=>s+c.protocols.reduce((s2,p)=>s2+p.items.length,0), 0);
+}
+
+function renderNav(filter) {
+  const nav = document.getElementById('navCategories');
+  nav.innerHTML = '';
+  filter = (filter||'').trim().toLowerCase();
+  DATA.forEach((cat, ci) => {
+    const matchedProtocols = cat.protocols.filter(p => !filter || p.title.toLowerCase().includes(filter));
+    if (filter && matchedProtocols.length === 0) return;
+    const block = document.createElement('div');
+    block.className = 'cat-block' + (filter ? ' open' : '');
+    block.id = 'cat-' + ci;
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn';
+    btn.innerHTML = `<span>${cat.name}</span><span><span class="count">${cat.protocols.length}</span> <span class="chev">›</span></span>`;
+    btn.onclick = () => { block.classList.toggle('open'); };
+    block.appendChild(btn);
+    const list = document.createElement('div');
+    list.className = 'proto-list';
+    matchedProtocols.forEach(p => {
+      const pb = document.createElement('button');
+      pb.className = 'proto-btn' + (state.current === p.id ? ' active' : '');
+      pb.innerHTML = `<span class="proto-dot"></span><span>${p.title}</span>`;
+      pb.onclick = () => openProtocol(p.id);
+      list.appendChild(pb);
+    });
+    block.appendChild(list);
+    nav.appendChild(block);
+  });
+}
+
+function onSearch() {
+  renderNav(document.getElementById('searchBox').value);
+}
+
+function findProtocol(id) {
+  for (const cat of DATA) {
+    for (const p of cat.protocols) {
+      if (p.id === id) return {cat, p};
+    }
+  }
+  return null;
+}
+
+function openProtocol(id) {
+  state.current = id;
+  renderNav(document.getElementById('searchBox').value);
+  const found = findProtocol(id);
+  if (!found) return renderHome();
+  const {cat, p} = found;
+  const main = document.getElementById('mainView');
+  const checkedCount = p.items.filter((_, i) => state.checks[id+'-'+i]).length;
+
+  let rows = p.items.map((step, i) => {
+    const key = id + '-' + i;
+    const checked = state.checks[key] ? 'checked' : '';
+    const rowClass = state.checks[key] ? 'checked' : '';
+    const commentVal = state.comments[key] || '';
+    return `<tr class="${rowClass}" id="row-${key}">
+      <td class="step-cell">${step}</td>
+      <td class="mark-cell"><input type="checkbox" class="chk" ${checked} onchange="toggleCheck('${key}', '${id}')"></td>
+      <td class="comment-cell"><input type="text" placeholder="note…" value="${commentVal}" oninput="setComment('${key}', this.value)"></td>
+    </tr>`;
+  }).join('');
+
+  main.innerHTML = `
+    <div class="proto-header">
+      <div class="breadcrumb">${cat.name}</div>
+      <h2>${p.title}</h2>
+      <div class="toolbar">
+        <button onclick="checkAll('${id}', ${p.items.length})">Mark all done</button>
+        <button onclick="resetProtocol('${id}', ${p.items.length})">Reset</button>
+        <button class="primary" onclick="window.print()">Print / save PDF</button>
+        <span class="progress-pill" id="progress-${id}"><b>${checkedCount}</b> / ${p.items.length} steps checked</span>
+      </div>
+    </div>
+    <table class="mark-table">
+      <thead><tr><th>Step</th><th>Done</th><th>Notes</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="foot-note">Generic self-practice checklist based on standard history/examination sequence and technique.
+    Always defer to your own medical school's specific station instructions and mark allocation.</p>
+  `;
+}
+
+function toggleCheck(key, id) {
+  state.checks[key] = !state.checks[key];
+  const row = document.getElementById('row-' + key);
+  if (row) row.classList.toggle('checked', !!state.checks[key]);
+  const found = findProtocol(id);
+  if (found) {
+    const count = found.p.items.filter((_, i) => state.checks[id+'-'+i]).length;
+    const pill = document.getElementById('progress-' + id);
+    if (pill) pill.innerHTML = `<b>${count}</b> / ${found.p.items.length} steps checked`;
+  }
+}
+function setComment(key, val) { state.comments[key] = val; }
+function checkAll(id, n) {
+  for (let i=0;i<n;i++) state.checks[id+'-'+i] = true;
+  openProtocol(id);
+}
+function resetProtocol(id, n) {
+  for (let i=0;i<n;i++) { state.checks[id+'-'+i] = false; state.comments[id+'-'+i] = ''; }
+  openProtocol(id);
+}
+
+function renderHome() {
+  state.current = null;
+  renderNav(document.getElementById('searchBox') ? document.getElementById('searchBox').value : '');
+  const main = document.getElementById('mainView');
+  let cards = DATA.map(cat => cat.protocols.map(p => `
+    <div class="home-card" onclick="openProtocol('${p.id}')">
+      <h3>${p.title}</h3>
+      <p>${cat.name} · ${p.items.length} steps</p>
+    </div>
+  `).join('')).join('');
+  main.innerHTML = `
+    <div class="home">
+      <div class="eyebrow" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--rust);">Practice companion</div>
+      <h2>History &amp; examination marking keys</h2>
+      <p class="lede">A full set of OSCE-style checklists covering every history and examination protocol taught across the clinical skills curriculum — for self-practice, peer marking, and revision.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="num">${DATA.length}</div><div class="lab">Systems</div></div>
+        <div class="stat"><div class="num">${totalProtocols()}</div><div class="lab">Protocols</div></div>
+        <div class="stat"><div class="num">${totalItems()}</div><div class="lab">Checklist steps</div></div>
+      </div>
+      <div class="home-grid">${cards}</div>
+    </div>
+  `;
+}
+
+renderHome();
+</script>
+</body>
+</html>
